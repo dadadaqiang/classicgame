@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦖 恐龙跳跳</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:20px;color:#fff}
+.back-btn{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;flex-shrink:0;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,0.06)}
+.back-btn:hover{color:#fff;background:rgba(255,255,255,0.12)}
+.header h1{flex:1;font-size:24px;font-weight:700}
+.score-box{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:12px;font-size:16px;font-weight:600}
+.score-box span{color:#fbbf24}
+canvas{display:block;margin:0 auto;border-radius:12px;background:#f7f7f7;box-shadow:inset 0 0 30px rgba(0,0,0,0.1)}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
+.controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
+.controls button.primary{background:#6366f1;border-color:#6366f1}
+.controls button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+.page-footer{text-align:center;color:rgba(255,255,255,0.15);font-size:11px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06)}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="header">
+    <a href="index.html" class="back-btn">← 游戏厅</a>
+    <h1>🦖 恐龙跳跳</h1>
+    <div class="score-box">🏆 得分 <span id="score">0</span></div>
+  </div>
+  <canvas id="gameCanvas" width="600" height="250"></canvas>
+  <div class="controls">
+    <button class="primary" id="startBtn">开始游戏</button>
+  </div>
+  <div class="status" id="status">空格/点击跳跃 · 躲避仙人掌和翼龙 🦎</div>
+  <div class="page-footer">🎮 经典游戏厅 · 13 合 1</div>
+</div>
+<script>
+const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),S=document.getElementById('score'),ST=document.getElementById('status');
+const W=600,H=250,G=0.55,JUMP=-11.5,GROUND=30,DINO_W=40,DINO_H=44,CACTUS_W=16,CACTUS_H=32,BIRD_W=32,BIRD_H=22;
+
+let dinoY,dinoVY,groundX,obstacles,score,speed,running,gameOver,loop,frame,timer,highScore;
+let dinoFrame,jumpCount,isDucking;
+
+function init(){
+  dinoY=0;dinoVY=0;groundX=0;obstacles=[];score=0;speed=6;running=false;gameOver=false;frame=0;timer=0;
+  dinoFrame=0;jumpCount=0;isDucking=false;
+  S.textContent='0';ST.textContent='空格/点击跳跃 · 躲避仙人掌和翼龙 🦎';
+  document.getElementById('startBtn').textContent='开始游戏';
+  draw();
+}
+
+function draw(){
+  // 背景
+  const isNight=Math.floor(timer/600)%2===1;
+  X.fillStyle=isNight?'#1a1a2e':'#f7f7f7';
+  X.fillRect(0,0,W,H);
+  
+  // 地面
+  const gy=H-GROUND;
+  X.fillStyle=isNight?'#2a2a3e':'#e0e0e0';
+  X.fillRect(0,gy,W,GROUND);
+  X.fillStyle=isNight?'#3a3a4e':'#ccc';
+  for(let x=-groundX%20;x<W;x+=20) X.fillRect(x,gy,8,2);
+  X.fillStyle=isNight?'#444':'#bbb';
+  X.fillRect(0,gy,W,2);
+
+  // 🦖 恐龙
+  const dx=60,dy=H-GROUND-DINO_H-dinoY;
+  X.save();
+  // 身体
+  X.fillStyle='#555';X.beginPath();X.roundRect(dx+6,dy+8,DINO_W-12,DINO_H-14,6);X.fill();
+  X.fillStyle='#444';X.beginPath();X.roundRect(dx+12,dy+4,DINO_W-20,DINO_H-10,4);X.fill();
+  // 头
+  X.fillStyle='#555';X.beginPath();X.ellipse(dx+DINO_W-8,dy+6,10,9,0,0,Math.PI*2);X.fill();
+  // 眼睛
+  X.fillStyle='#fff';X.beginPath();X.arc(dx+DINO_W-4,dy+4,3.5,0,Math.PI*2);X.fill();
+  X.fillStyle='#222';X.beginPath();X.arc(dx+DINO_W-3,dy+4,2,0,Math.PI*2);X.fill();
+  // 嘴巴
+  X.fillStyle='#777';X.beginPath();X.ellipse(dx+DINO_W-2,dy+9,3,1.5,0.2,0,Math.PI*2);X.fill();
+  // 腿
+  const legOff=Math.sin(frame*0.15)*4;
+  X.fillStyle='#555';X.fillRect(dx+8,dy+DINO_H-8,5,8+legOff);
+  X.fillRect(dx+DINO_W-14,dy+DINO_H-8,5,8-legOff);
+  // 手臂（小短手）
+  X.fillStyle='#555';X.fillRect(dx+DINO_W-12,dy+12,6,4);
+  // 尾巴
+  X.fillStyle='#555';X.beginPath();X.moveTo(dx+4,dy+16);X.lineTo(dx-6,dy+10);X.lineTo(dx-2,dy+18);X.fill();
+  // 下蹲时变矮
+  if(isDucking){X.fillStyle='#555';X.fillRect(dx+6,dy+DINO_H-6,DINO_W-12,4)}
+  X.restore();
+
+  // 🌵 仙人掌 & 🦅 翼龙
+  obstacles.forEach(o=>{
+    const ox=o.x,oy=H-GROUND-(o.isBird?BIRD_W:CACTUS_H)-o.yOff;
+    if(o.isBird){
+      // 翼龙
+      X.fillStyle='#666';
+      X.beginPath();X.ellipse(ox+BIRD_W/2,oy+BIRD_H/2,BIRD_W/2,BIRD_H/2,0,0,Math.PI*2);X.fill();
+      X.fillStyle='#888';
+      X.beginPath();X.ellipse(ox+BIRD_W/2-4,oy+BIRD_H/2-3,6,4,0,0,Math.PI*2);X.fill();
+      // 翅膀
+      const wing=Math.sin(frame*0.2)*6;
+      X.fillStyle='#777';
+      X.beginPath();X.ellipse(ox+BIRD_W/2-5,oy+BIRD_H/2-wing,8,4,-0.3,0,Math.PI*2);X.fill();
+      X.beginPath();X.ellipse(ox+BIRD_W/2-5,oy+BIRD_H/2+wing,8,4,0.3,0,Math.PI*2);X.fill();
+      X.fillStyle='#fff';X.beginPath();X.arc(ox+8,oy+6,2,0,Math.PI*2);X.fill();
+      X.fillStyle='#222';X.beginPath();X.arc(ox+9,oy+6,1.2,0,Math.PI*2);X.fill();
+    } else {
+      // 仙人掌
+      X.fillStyle='#2d8a4e';
+      X.beginPath();X.roundRect(ox+1,oy,CACTUS_W-2,CACTUS_H-4,4);X.fill();
+      X.fillStyle='#236b3e';
+      X.fillRect(ox+3,oy+2,CACTUS_W-6,4);
+      X.fillRect(ox+2,oy+8,CACTUS_W-4,3);
+      // 分支
+      X.fillStyle='#2d8a4e';
+      X.beginPath();X.roundRect(ox-4,oy+8,5,10,3);X.fill();
+      X.beginPath();X.roundRect(ox+CACTUS_W-1,oy+12,5,8,3);X.fill();
+    }
+  });
+
+  // 分数
+  X.fillStyle=isNight?'#fff':'#555';
+  X.font='bold 14px monospace';X.textAlign='right';X.textBaseline='top';
+  X.fillText('★ '+score,W-12,8);
+  if(highScore)X.fillStyle='rgba(0,0,0,0.2)';X.font='11px monospace';X.fillText('HI '+(highScore||''),W-12,26);
+  
+  if(gameOver){
+    X.fillStyle='rgba(0,0,0,0.25)';X.fillRect(0,0,W,H);
+    X.fillStyle='#fff';X.font='bold 28px sans-serif';X.textAlign='center';X.textBaseline='middle';
+    X.fillText('💀 GAME OVER',W/2,H/2-12);
+    X.font='16px sans-serif';X.fillText('得分: '+score,W/2,H/2+22);
+  }
+}
+
+function update(){
+  if(!running||gameOver)return;
+  frame++;timer++;
+  if(timer%3===0&&!gameOver&&running)score++,S.textContent=score;
+  speed=6+Math.floor(score/100)*0.8;
+  if(speed>18)speed=18;
+
+  // 重力
+  dinoVY+=G;dinoY+=dinoVY;
+  if(dinoY<=0){dinoY=0;dinoVY=0;jumpCount=0}
+
+  // 地面滚动
+  groundX+=speed;
+  
+  // 障碍物移动
+  obstacles.forEach(o=>o.x-=speed*1.2);
+  obstacles=obstacles.filter(o=>o.x>-60);
+
+  // 生成障碍物
+  if(frame%Math.max(30,80-speed*2)===0&&obstacles.length<3&&frame>30){
+    const isBird=Math.random()<0.25&&score>100;
+    obstacles.push({
+      x:W+20,
+      yOff:isBird?(Math.random()<0.5?60:25):0,
+      isBird
+    });
+  }
+
+  // 碰撞检测
+  const dinoLeft=60+6,dinoRight=60+DINO_W-6;
+  const dinoBottom=H-GROUND-dinoY;
+  const dinoTop=dinoBottom-DINO_H+6;
+  
+  for(const o of obstacles){
+    const oLeft=o.x,oRight=o.x+(o.isBird?BIRD_W:CACTUS_W);
+    const oBottom=H-GROUND-(o.isBird?BIRD_W:CACTUS_H)-o.yOff;
+    const oTop=oBottom+(o.isBird?BIRD_H:CACTUS_H);
+    const shrink=4;
+    if(dinoLeft+shrink<oRight-shrink&&dinoRight-shrink>oLeft+shrink){
+      if(dinoBottom-shrink<oTop-shrink&&dinoTop+shrink<oBottom+shrink){
+        endGame();return;
+      }
+    }
+  }
+  draw();
+}
+
+function endGame(){
+  gameOver=true;running=false;clearInterval(loop);
+  if(!highScore||score>highScore)highScore=score;
+  ST.textContent='💀 Game Over! 得分: '+score+(score>=(highScore||0)?' (新纪录!)':'');
+  document.getElementById('startBtn').textContent='🔄 再来一次';
+  draw();
+}
+
+function startGame(){
+  if(running)return;
+  init();running=true;gameOver=false;
+  document.getElementById('startBtn').textContent='▶ 游戏中';
+  ST.textContent='';
+  loop=setInterval(update,16);
+}
+
+function jump(){
+  if(gameOver)return;
+  if(!running)startGame();
+  if(dinoY>0&&jumpCount>=1)return; // double jump disabled
+  if(dinoY===0){dinoVY=JUMP;jumpCount=1}
+}
+
+document.getElementById('startBtn').addEventListener('click',startGame);
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump()}
+  if(e.code==='ArrowDown'){e.preventDefault();isDucking=true}
+});
+document.addEventListener('keyup',e=>{if(e.code==='ArrowDown')isDucking=false});
+C.addEventListener('click',jump);
+C.addEventListener('touchstart',e=>{e.preventDefault();jump()},{passive:true});
+init();
+</script></body></html>
