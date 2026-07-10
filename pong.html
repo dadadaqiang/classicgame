@@ -9,7 +9,7 @@
 body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
 .game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff}
-.header h1{font-size:24px;font-weight:700}.score-box{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:12px;font-size:16px;font-weight:600}
+.back-btn{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;flex-shrink:0;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,0.06)}.back-btn:hover{color:#fff;background:rgba(255,255,255,0.12)}.header h1{flex:1;font-size:24px;font-weight:700}.score-box{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:12px;font-size:16px;font-weight:600}
 .score-box span{color:#fbbf24}canvas{display:block;margin:0 auto;border-radius:12px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
 .controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
 .controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
@@ -22,7 +22,7 @@ body{min-height:100vh;display:flex;justify-content:center;align-items:center;bac
 </head>
 <body>
 <div class="game-wrapper">
-  <div class="header"><h1>🏓 乒乓球</h1><div><span class="score-box" style="margin-right:8px">你 <span id="playerScore">0</span></span><span class="score-box">AI <span id="aiScore">0</span></span></div></div>
+  <div class="header"><a href="index.html" class="back-btn">← 游戏厅</a><h1>🏓 乒乓球</h1><div><span class="score-box" style="margin-right:8px">你 <span id="playerScore">0</span></span><span class="score-box">AI <span id="aiScore">0</span></span></div></div>
   <canvas id="gameCanvas" width="600" height="400"></canvas>
   <div class="controls">
     <button class="primary" id="startBtn">开始游戏</button>
@@ -50,7 +50,7 @@ if(bX-BS<15+PW&&bX-BS<15+PW+5&&bY+BS>pY&&bY-BS<pY+PH){bVX=Math.abs(bVX)+0.3;cons
 if(bX+BS>W-15-PW&&bX+BS>W-15-PW-5&&bY+BS>aY&&bY-BS<aY+PH){bVX=-(Math.abs(bVX)+0.3);const offset=(bY-(aY+PH/2))/(PH/2);bVY=offset*4;bX=W-15-PW-BS}
 if(bX<0){aScore++;aS.textContent=aScore;if(aScore>=5){endGame('AI');return}resetBall()}
 if(bX>W){pScore++;pS.textContent=pScore;if(pScore>=5){endGame('你');return}resetBall()}
-const speed=3.5;const target=bY-bX+W>0?aY+PH/2:bY;aY+=Math.sign(target-aY)*Math.min(speed,Math.abs(target-aY));
+const speed=3.5;let aTarget;if(bVX>0){aTarget=bY}else{aTarget=H/2}aY+=Math.sign(aTarget-aY)*Math.min(speed,Math.abs(aTarget-aY));aY=Math.max(0,Math.min(H-PH,aY));
 draw()}
 function endGame(w){gameOver=true;running=false;clearInterval(loop);winner=w;ST.textContent=`🎉 ${w} 获胜！${pScore} - ${aScore}`;document.getElementById('startBtn').textContent='🔄 再来一局'}
 function startGame(){if(running)return;if(gameOver||document.getElementById('startBtn').textContent.includes('开始'))init();running=true;document.getElementById('startBtn').textContent='▶ 比赛中';ST.textContent='';loop=setInterval(update,16)}
