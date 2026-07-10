@@ -9,7 +9,7 @@
 body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
 .game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff}
-.header h1{font-size:24px;font-weight:700}.info{display:flex;gap:16px}
+.back-btn{color:rgba(255,255,255,0.35);text-decoration:none;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;flex-shrink:0}.back-btn:hover{color:rgba(255,255,255,0.7)}.header h1{flex:1;font-size:24px;font-weight:700}.info{display:flex;gap:16px}
 .info div{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:10px;font-size:14px;font-weight:600}
 .info .mines span{color:#ef4444}.info .time span{color:#22d3ee}
 canvas{display:block;margin:0 auto;border-radius:10px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
@@ -17,18 +17,19 @@ canvas{display:block;margin:0 auto;border-radius:10px;background:#1a1a2e;box-sha
 .controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
 .controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
 .controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
-.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}.page-footer{text-align:center;color:rgba(255,255,255,0.15);font-size:11px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06)}
 @media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:16px}canvas{max-width:100%}}
 </style>
 </head>
 <body>
 <div class="game-wrapper">
-  <div class="header"><h1>💣 扫雷</h1><div class="info"><div class="mines">💣 <span id="mineCount">10</span></div><div class="time">⏱ <span id="timer">0</span></div></div></div>
+  <div class="header"><a href="index.html" class="back-btn">← 游戏厅</a><h1>💣 扫雷</h1><div class="info"><div class="mines">💣 <span id="mineCount">10</span></div><div class="time">⏱ <span id="timer">0</span></div></div></div>
   <canvas id="gameCanvas" width="300" height="300"></canvas>
   <div class="controls">
     <button class="primary" id="startBtn">新游戏</button>
   </div>
   <div class="status" id="status">左键挖开 · 右键标旗 ⚑</div>
+  <div class="page-footer">🎮 经典游戏厅 · 12 合 1</div>
 </div>
 <script>
 const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),mE=document.getElementById('mineCount'),tE=document.getElementById('timer'),ST=document.getElementById('status');

@@ -33,7 +33,9 @@
     margin-bottom: 16px;
     color: #fff;
   }
-  .header h1 { font-size: 22px; font-weight: 700; }
+  .back-btn { color:rgba(255,255,255,0.35); text-decoration:none; font-size:13px; font-weight:600; transition:all .2s; white-space:nowrap; flex-shrink:0; }
+  .back-btn:hover { color:rgba(255,255,255,0.7); }
+  .header h1 { flex:1; font-size:22px; font-weight:700; }
   .score-box {
     background: rgba(255,255,255,0.1);
     padding: 6px 16px;
@@ -96,6 +98,7 @@
     margin-top: 10px;
     min-height: 20px;
   }
+  .page-footer { text-align:center; color:rgba(255,255,255,0.15); font-size:11px; margin-top:18px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.06); }
   .key-hint {
     display: flex;
     gap: 6px;
@@ -125,6 +128,7 @@
 <div class="game-wrapper">
   <div class="left-col">
     <div class="header">
+      <a href="index.html" class="back-btn">← 游戏厅</a>
       <h1>🧱 俄罗斯方块</h1>
       <div class="score-box">🏆 得分 <span id="score">0</span></div>
     </div>
@@ -134,6 +138,7 @@
       <button id="restartBtn">重新开始</button>
     </div>
     <div class="status" id="status"></div>
+    <div class="page-footer">🎮 经典游戏厅 · 12 合 1</div>
     <div class="key-hint">
       <kbd>←</kbd> <kbd>→</kbd> 移动
       <kbd>↑</kbd> 旋转
