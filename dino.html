@@ -157,14 +157,20 @@ function update(){
   obstacles.forEach(o=>o.x-=speed*1.2);
   obstacles=obstacles.filter(o=>o.x>-60);
 
-  // 生成障碍物
-  if(frame%Math.max(30,80-speed*2)===0&&obstacles.length<3&&frame>30){
-    const isBird=Math.random()<0.25&&score>100;
-    obstacles.push({
-      x:W+20,
-      yOff:isBird?(Math.random()<0.5?60:25):0,
-      isBird
-    });
+  // 生成障碍物（随机紧凑间隔，像原版恐龙一样）
+  if(frame>20&&obstacles.length<2){
+    const last=obstacles[obstacles.length-1];
+    const minGap=Math.max(150,400-speed*10);
+    if(!last||last.x<W-minGap){
+      if(Math.random()<0.03+speed*0.004){
+        const isBird=Math.random()<0.2&&score>150;
+        obstacles.push({
+          x:W+5+Math.random()*15,
+          yOff:isBird?(Math.random()<0.5?60:30):0,
+          isBird
+        });
+      }
+    }
   }
 
   // 碰撞检测
