@@ -168,17 +168,16 @@ function update(){
   }
 
   // 碰撞检测
-  const dinoLeft=60+6,dinoRight=60+DINO_W-6;
-  const dinoBottom=H-GROUND-dinoY;
-  const dinoTop=dinoBottom-DINO_H+6;
+  const dinoL=60+6,dinoR=60+DINO_W-6;
+  const dinoB=H-GROUND-dinoY-4;    // 脚底偏上一点（视觉宽容）
+  const dinoT=dinoB-DINO_H+10;       // 头顶偏下一点
   
   for(const o of obstacles){
-    const oLeft=o.x,oRight=o.x+(o.isBird?BIRD_W:CACTUS_W);
-    const oBottom=H-GROUND-(o.isBird?BIRD_W:CACTUS_H)-o.yOff;
-    const oTop=oBottom+(o.isBird?BIRD_H:CACTUS_H);
-    const shrink=4;
-    if(dinoLeft+shrink<oRight-shrink&&dinoRight-shrink>oLeft+shrink){
-      if(dinoBottom-shrink<oTop-shrink&&dinoTop+shrink<oBottom+shrink){
+    const oL=o.x+2,oR=o.x+(o.isBird?BIRD_W:CACTUS_W)-2;
+    const oT=H-GROUND-(o.isBird?BIRD_W:CACTUS_H)-o.yOff+4;  // 障碍物顶部（向下偏一点）
+    const oB=oT+(o.isBird?BIRD_H:CACTUS_H)-4;                 // 障碍物底部（向上偏一点）
+    if(dinoL<oR&&dinoR>oL){
+      if(dinoT<oB&&dinoB>oT){
         endGame();return;
       }
     }
