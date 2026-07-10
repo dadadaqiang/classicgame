@@ -41,7 +41,7 @@ canvas{display:block;margin:0 auto;border-radius:12px;background:#f7f7f7;box-sha
 </div>
 <script>
 const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),S=document.getElementById('score'),ST=document.getElementById('status');
-const W=600,H=250,G=0.55,JUMP=-11.5,GROUND=30,DINO_W=40,DINO_H=44,CACTUS_W=16,CACTUS_H=32,BIRD_W=32,BIRD_H=22;
+const W=600,H=250,G=-0.6,JUMP=12,GROUND=30,DINO_W=40,DINO_H=44,CACTUS_W=16,CACTUS_H=32,BIRD_W=32,BIRD_H=22;
 
 let dinoY,dinoVY,groundX,obstacles,score,speed,running,gameOver,loop,frame,timer,highScore;
 let dinoFrame,jumpCount,isDucking;
@@ -146,7 +146,8 @@ function update(){
   if(speed>18)speed=18;
 
   // 重力
-  dinoVY+=G;dinoY+=dinoVY;
+  if(dinoY>0){dinoVY+=G;dinoY+=dinoVY}
+  // 落地
   if(dinoY<=0){dinoY=0;dinoVY=0;jumpCount=0}
 
   // 地面滚动
@@ -205,7 +206,7 @@ function jump(){
   if(gameOver)return;
   if(!running)startGame();
   if(dinoY>0&&jumpCount>=1)return; // double jump disabled
-  if(dinoY===0){dinoVY=JUMP;jumpCount=1}
+  if(dinoY===0){dinoVY=JUMP;jumpCount=1;dinoY=1}
 }
 
 document.getElementById('startBtn').addEventListener('click',startGame);
