@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五子棋 ⚫</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff;gap:16px}
+.header h1{font-size:24px;font-weight:700}.turn{background:rgba(255,255,255,0.1);padding:6px 16px;border-radius:10px;font-size:14px;font-weight:600}
+.turn span{color:#fbbf24}canvas{display:block;margin:0 auto;border-radius:12px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
+.controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
+.controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="header"><h1>⚫ 五子棋</h1><div class="turn"><span id="turn">你的回合</span></div></div>
+  <canvas id="gameCanvas" width="440" height="440"></canvas>
+  <div class="controls">
+    <button class="primary" id="startBtn">新游戏</button>
+  </div>
+  <div class="status" id="status">点击棋盘落子 · 先连成五子获胜</div>
+</div>
+<script>
+const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),tE=document.getElementById('turn'),ST=document.getElementById('status');
+const SZ=15,CELL=C.width/SZ,PR=CELL*0.42;
+let board,turn,gameOver;
+function init(){board=Array.from({length:SZ},()=>Array(SZ).fill(0));turn=1;gameOver=false;tE.textContent='你的回合 (⚫)';ST.textContent='点击棋盘落子 · 先连成五子获胜';draw()}
+function draw(){X.clearRect(0,0,C.width,C.height);
+X.strokeStyle='rgba(255,255,255,0.15)';X.lineWidth=1;
+for(let i=0;i<SZ;i++){X.beginPath();X.moveTo(i*CELL+CELL/2,CELL/2);X.lineTo(i*CELL+CELL/2,C.height-CELL/2);X.stroke();X.beginPath();X.moveTo(CELL/2,i*CELL+CELL/2);X.lineTo(C.width-CELL/2,i*CELL+CELL/2);X.stroke()}
+for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(!board[r][c])continue;const x=c*CELL+CELL/2,y=r*CELL+CELL/2;
+const g=X.createRadialGradient(x-4,y-4,0,x,y,PR);if(board[r][c]===1){g.addColorStop(0,'#555');g.addColorStop(1,'#111')}else{g.addColorStop(0,'#fff');g.addColorStop(1,'#ccc')}
+X.beginPath();X.arc(x,y,PR,0,Math.PI*2);X.fillStyle=g;X.fill();X.strokeStyle='rgba(0,0,0,0.1)';X.lineWidth=1;X.stroke()}
+if(gameOver){X.fillStyle='rgba(0,0,0,0.3)';X.fillRect(0,0,C.width,C.height);X.fillStyle='#fff';X.font='bold 36px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText('🏆',C.width/2,C.height/2)}}
+function checkWin(r,c,p){const d=[[1,0],[0,1],[1,1],[1,-1]];for(const[dr,dc]of d){let cnt=1;for(let s=-1;s<=1;s+=2){let nr=r+dr*s,nc=c+dc*s;while(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===p){cnt++;nr+=dr*s;nc+=dc*s}}if(cnt>=5)return true}return false}
+function aiMove(){let best=null,bestScore=-1;
+for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(board[r][c])continue;let score=0;
+const d=[[1,0],[0,1],[1,1],[1,-1]];for(const[dr,dc]of d){let cnt2=1,open2=0;for(let s=-1;s<=1;s+=2){let nr=r+dr*s,nc=c+dc*s;while(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===2){cnt2++;nr+=dr*s;nc+=dc*s}if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&!board[nr][nc])open2++}score+=cnt2*cnt2*(open2+1);
+let cnt1=1,open1=0;for(let s=-1;s<=1;s+=2){let nr=r+dr*s,nc=c+dc*s;while(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===1){cnt1++;nr+=dr*s;nc+=dc*s}if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&!board[nr][nc])open1++}score+=cnt1*cnt1*(open1+1)*1.2}
+score+=Math.random()*0.5;if(score>bestScore){bestScore=score;best={r,c}}}
+if(best){place(best.r,best.c,2)}}
+function place(r,c,p){if(gameOver||board[r][c]||turn!==p)return false;board[r][c]=p;draw();if(checkWin(r,c,p)){gameOver=true;ST.textContent=p===1?'🎉 你赢了！':'🤖 AI 赢了！';tE.textContent='游戏结束';draw();return true}
+turn=p===1?2:1;tE.textContent=turn===1?'你的回合 (⚫)':'AI 思考中...';if(turn===2&&!gameOver){setTimeout(aiMove,300)}return true}
+C.addEventListener('click',e=>{const r=C.getBoundingClientRect();const c=Math.round((e.clientX-r.left)*SZ/r.width-0.5);const rr=Math.round((e.clientY-r.top)*SZ/r.height-0.5);if(rr>=0&&rr<SZ&&c>=0&&c<SZ&&turn===1)place(rr,c,1)});
+document.getElementById('startBtn').addEventListener('click',init);
+init();
+</script></body></html>

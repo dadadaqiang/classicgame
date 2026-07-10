@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 经典游戏厅 - 12 合 1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif;padding:32px 24px;color:#fff}
+.title{font-size:40px;font-weight:800;margin-bottom:4px;background:linear-gradient(135deg,#a78bfa,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:rgba(255,255,255,0.35);font-size:15px;margin-bottom:36px}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;width:100%;max-width:900px}
+.card{background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);border-radius:16px;padding:20px 16px;text-align:center;text-decoration:none;color:#fff;border:1px solid rgba(255,255,255,0.08);transition:all 0.25s ease;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.card:hover{transform:translateY(-6px);background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+.card:active{transform:translateY(-3px)}
+.card .icon{font-size:42px;line-height:1.1}
+.card .name{font-size:15px;font-weight:700}
+.card .tag{font-size:11px;color:rgba(255,255,255,0.4);padding:2px 10px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04)}
+.footer{margin-top:40px;color:rgba(255,255,255,0.15);font-size:13px}
+@media(max-width:640px){.title{font-size:28px}.games{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.card{padding:16px 12px}.card .icon{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="title">🎮 经典游戏厅</div>
+<div class="subtitle">12 合 1 · 选一个开玩！</div>
+
+<div class="games">
+  <a class="card" href="snake.html">
+    <div class="icon">🐍</div>
+    <div class="name">贪吃蛇</div>
+    <span class="tag">← ↑ → ↓</span>
+  </a>
+  <a class="card" href="tetris.html">
+    <div class="icon">🧱</div>
+    <div class="name">俄罗斯方块</div>
+    <span class="tag">← → ↑ ↓</span>
+  </a>
+  <a class="card" href="2048.html">
+    <div class="icon">🀄</div>
+    <div class="name">2048</div>
+    <span class="tag">合并数字</span>
+  </a>
+  <a class="card" href="pong.html">
+    <div class="icon">🏓</div>
+    <div class="name">乒乓球</div>
+    <span class="tag">VS AI</span>
+  </a>
+  <a class="card" href="minesweeper.html">
+    <div class="icon">💣</div>
+    <div class="name">扫雷</div>
+    <span class="tag">左右开弓</span>
+  </a>
+  <a class="card" href="breakout.html">
+    <div class="icon">🧱</div>
+    <div class="name">打砖块</div>
+    <span class="tag">多关卡</span>
+  </a>
+  <a class="card" href="slidepuzzle.html">
+    <div class="icon">🔢</div>
+    <div class="name">数字华容道</div>
+    <span class="tag">滑动拼图</span>
+  </a>
+  <a class="card" href="gomoku.html">
+    <div class="icon">⚫</div>
+    <div class="name">五子棋</div>
+    <span class="tag">VS AI</span>
+  </a>
+  <a class="card" href="memory.html">
+    <div class="icon">🃏</div>
+    <div class="name">记忆翻牌</div>
+    <span class="tag">考验记忆力</span>
+  </a>
+  <a class="card" href="flappybird.html">
+    <div class="icon">🐦</div>
+    <div class="name">Flappy Bird</div>
+    <span class="tag">点击飞行</span>
+  </a>
+  <a class="card" href="tictactoe.html">
+    <div class="icon">❌</div>
+    <div class="name">井字棋</div>
+    <span class="tag">VS AI</span>
+  </a>
+  <a class="card" href="othello.html">
+    <div class="icon">⚪</div>
+    <div class="name">黑白棋</div>
+    <span class="tag">VS AI</span>
+  </a>
+</div>
+
+<div class="footer">Pi · 经典游戏厅 · 12 合 1</div>
+</body>
+</html>

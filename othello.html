@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黑白棋 ⚪</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff}
+.header h1{font-size:24px;font-weight:700}.info{display:flex;gap:12px;align-items:center}
+.info div{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.info .you span{color:#60a5fa}.info .ai span{color:#ef4444}
+canvas{display:block;margin:0 auto;border-radius:12px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
+.controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
+.controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="header"><h1>⚪ 黑白棋</h1><div class="info"><div class="you">你 (⚫) <span id="youScore">2</span></div><div class="ai">AI (⚪) <span id="aiScore">2</span></div></div></div>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  <div class="controls">
+    <button class="primary" id="startBtn">新游戏</button>
+  </div>
+  <div class="status" id="status">点击棋盘落子 · 夹住对方棋子即可翻转</div>
+</div>
+<script>
+const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),yE=document.getElementById('youScore'),aE=document.getElementById('aiScore'),ST=document.getElementById('status');
+const SZ=8,CELL=C.width/SZ,PR=CELL*0.4;
+let board,turn,gameOver;
+const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+function init(){board=Array.from({length:SZ},()=>Array(SZ).fill(0));const m=Math.floor(SZ/2);board[m-1][m-1]=2;board[m-1][m]=1;board[m][m-1]=1;board[m][m]=2;turn=1;gameOver=false;updateScores();ST.textContent='你的回合 (⚫)';draw();if(!hasMove(1))skipTurn()}
+function updateScores(){let y=0,a=0;for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(board[r][c]===1)y++;if(board[r][c]===2)a++}yE.textContent=y;aE.textContent=a;return{y,a}}
+function validMoves(p){const moves=[];for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++)if(board[r][c]===0)for(const[dr,dc]of DIRS){let nr=r+dr,nc=c+dc;let found=false;while(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===(p===1?2:1)){nr+=dr;nc+=dc;found=true}if(found&&nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===p){moves.push({r,c});break}}return moves}
+function hasMove(p){return validMoves(p).length>0}
+function flipDir(r,c,dr,dc,p){const opp=p===1?2:1;let nr=r+dr,nc=c+dc;const toFlip=[];while(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===opp){toFlip.push({r:nr,c:nc});nr+=dr;nc+=dc}if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===p){toFlip.forEach(({r:fr,c:fc})=>board[fr][fc]=p);return toFlip.length}return 0}
+function place(r,c,p){if(gameOver||board[r][c]!==0||p!==turn)return;let flipped=0;for(const[dr,dc]of DIRS)flipped+=flipDir(r,c,dr,dc,p);if(flipped===0)return;board[r][c]=p;turn=p===1?2:1;updateScores();draw();
+if(checkGameOver())return;
+if(!hasMove(turn)){if(!skipTurn())return}else{ST.textContent=turn===1?'你的回合 (⚫)':'AI 思考中...'}
+if(turn===2)setTimeout(aiMove,300)}
+function skipTurn(){if(turn===1)ST.textContent='你没有可走的位置，AI 继续';else ST.textContent='AI 没有可走的位置，你的回合';turn=turn===1?2:1;
+if(hasMove(turn)){ST.textContent=turn===1?'你的回合 (⚫)':'AI 思考中...';if(turn===2)setTimeout(aiMove,300);return true}
+endGame();return false}
+function checkGameOver(){if(!hasMove(1)&&!hasMove(2)){endGame();return true}return false}
+function endGame(){gameOver=true;const{y,a}=updateScores();if(y>a)ST.textContent=`🎉 你赢了！ ${y} - ${a}`;else if(a>y)ST.textContent=`🤖 AI 赢了！ ${a} - ${y}`;else ST.textContent=`🤝 平局！ ${y} - ${a}`;draw()}
+function aiMove(){if(gameOver)return;const moves=validMoves(2);if(moves.length===0){skipTurn();return}
+let best=null,bestScore=-1;
+for(const m of moves){let score=0;for(const[dr,dc]of DIRS){let nr=m.r+dr,nc=m.c+dc;let cnt=0;while(nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===1){cnt++;nr+=dr;nc+=dc}if(cnt>0&&nr>=0&&nr<SZ&&nc>=0&&nc<SZ&&board[nr][nc]===2)score+=cnt}
+// 角落偏好
+if((m.r===0||m.r===SZ-1)&&(m.c===0||m.c===SZ-1))score+=5;else if(m.r===0||m.r===SZ-1||m.c===0||m.c===SZ-1)score+=2;
+score+=Math.random()*0.1;if(score>bestScore){bestScore=score;best=m}}
+if(best){board[best.r][best.c]=2;for(const[dr,dc]of DIRS)flipDir(best.r,best.c,dr,dc,2);turn=1;updateScores();draw();
+if(checkGameOver())return;if(!hasMove(1)){skipTurn()}
+ST.textContent='你的回合 (⚫)'}}
+function draw(){X.clearRect(0,0,C.width,C.height);
+X.fillStyle='rgba(255,255,255,0.04)';X.fillRect(0,0,C.width,C.height);
+for(let r=0;r<=SZ;r++){X.strokeStyle='rgba(255,255,255,0.1)';X.lineWidth=1;X.beginPath();X.moveTo(0,r*CELL);X.lineTo(C.width,r*CELL);X.stroke();X.beginPath();X.moveTo(r*CELL,0);X.lineTo(r*CELL,C.height);X.stroke()}
+for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(!board[r][c])continue;const x=c*CELL+CELL/2,y=r*CELL+CELL/2;
+const g=X.createRadialGradient(x-3,y-3,0,x,y,PR);if(board[r][c]===1){g.addColorStop(0,'#333');g.addColorStop(1,'#111')}else{g.addColorStop(0,'#fff');g.addColorStop(1,'#ccc')}
+X.beginPath();X.arc(x,y,PR,0,Math.PI*2);X.fillStyle=g;X.fill();X.strokeStyle='rgba(0,0,0,0.1)';X.lineWidth=0.5;X.stroke()}
+if(!gameOver&&turn===1){const moves=validMoves(1);moves.forEach(m=>{const x=m.c*CELL+CELL/2,y=m.r*CELL+CELL/2;X.fillStyle='rgba(99,102,241,0.25)';X.beginPath();X.arc(x,y,PR,0,Math.PI*2);X.fill()})}}
+C.addEventListener('click',e=>{const r=C.getBoundingClientRect();const c=Math.floor((e.clientX-r.left)*SZ/r.width);const rr=Math.floor((e.clientY-r.top)*SZ/r.height);if(rr>=0&&rr<SZ&&c>=0&&c<SZ&&turn===1)place(rr,c,1)});
+document.getElementById('startBtn').addEventListener('click',init);
+init();
+</script></body></html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字华容道 🔢</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff}
+.header h1{font-size:24px;font-weight:700}.score-box{display:flex;gap:12px}
+.score-box div{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.score-box .moves span{color:#fbbf24}.score-box .timer span{color:#22d3ee}
+canvas{display:block;margin:0 auto;border-radius:12px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
+.controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
+.controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="header"><h1>🔢 数字华容道</h1><div class="score-box"><div class="moves">步数 <span id="moves">0</span></div><div class="timer">⏱ <span id="timer">0</span></div></div></div>
+  <canvas id="gameCanvas" width="360" height="360"></canvas>
+  <div class="controls">
+    <button class="primary" id="startBtn">新游戏</button>
+  </div>
+  <div class="status" id="status">点击数字滑动 · 按顺序排好 1-15</div>
+</div>
+<script>
+const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),mE=document.getElementById('moves'),tE=document.getElementById('timer'),ST=document.getElementById('status');
+const SZ=4,CELL=C.width/SZ,R=6;
+let board,emptyR,emptyC,moves,time,timeInterval,gameOver;
+function init(){board=Array.from({length:SZ},()=>Array(SZ).fill(0));let nums=[];for(let i=1;i<SZ*SZ;i++)nums.push(i);nums.push(0);
+do{for(let i=nums.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[nums[i],nums[j]]=[nums[j],nums[i]]}
+let k=0;for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){board[r][c]=nums[k++];if(board[r][c]===0){emptyR=r;emptyC=c}}
+}while(!solvable()||solved());
+moves=0;time=0;gameOver=false;mE.textContent='0';tE.textContent='0';clearInterval(timeInterval);ST.textContent='点击数字滑动 · 按顺序排好 1-15';draw()}
+function solvable(){let inv=0;const flat=board.flat();for(let i=0;i<flat.length;i++)for(let j=i+1;j<flat.length;j++)if(flat[i]&&flat[j]&&flat[i]>flat[j])inv++;
+if(SZ%2===0)inv+=SZ-emptyR;return inv%2===0}
+function solved(){let k=1;for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(r===SZ-1&&c===SZ-1)return board[r][c]===0;if(board[r][c]!==k++)return false}return true}
+function draw(){X.clearRect(0,0,C.width,C.height);
+for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){const v=board[r][c];const x=c*CELL,y=r*CELL;
+if(v===0){X.fillStyle='rgba(255,255,255,0.02)';X.beginPath();X.roundRect(x+2,y+2,CELL-4,CELL-4,R);X.fill();continue}
+X.beginPath();X.roundRect(x+2,y+2,CELL-4,CELL-4,R);const g=X.createLinearGradient(x,y,x+CELL,y+CELL);const hue=(v*25)%360;g.addColorStop(0,`hsl(${hue},60%,55%)`);g.addColorStop(1,`hsl(${hue},60%,40%)`);X.fillStyle=g;X.fill();
+X.fillStyle='rgba(255,255,255,0.15)';X.beginPath();X.roundRect(x+5,y+4,CELL-12,CELL/4,2);X.fill();
+X.fillStyle='#fff';X.font=`bold ${CELL*0.35}px 'Segoe UI',sans-serif`;X.textAlign='center';X.textBaseline='middle';X.fillText(v,x+CELL/2,y+CELL/2+1)}
+if(gameOver){X.fillStyle='rgba(0,0,0,0.3)';X.fillRect(0,0,C.width,C.height);X.fillStyle='#fff';X.font='bold 36px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText('🎉 完成！',C.width/2,C.height/2)}}
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,rr){this.moveTo(x+rr,y);this.lineTo(x+w-rr,y);this.quadraticCurveTo(x+w,y,x+w,y+rr);this.lineTo(x+w,y+h-rr);this.quadraticCurveTo(x+w,y+h,x+w-rr,y+h);this.lineTo(x+rr,y+h);this.quadraticCurveTo(x,y+h,x,y+h-rr);this.lineTo(x,y+rr);this.quadraticCurveTo(x,y,x+rr,y)}}
+function moveTile(r,c){if(gameOver)return;if(r===emptyR&&c===emptyC)return;const dr=Math.abs(r-emptyR),dc=Math.abs(c-emptyC);if(dr+dc!==1)return;
+board[emptyR][emptyC]=board[r][c];board[r][c]=0;emptyR=r;emptyC=c;moves++;mE.textContent=moves;if(!timeInterval&&!gameOver){timeInterval=setInterval(()=>{time++;tE.textContent=time},1000)}
+draw();if(solved()){gameOver=true;clearInterval(timeInterval);ST.textContent=`🎉 恭喜完成！用了 ${moves} 步，${time} 秒`;draw()}}
+C.addEventListener('click',e=>{const r=C.getBoundingClientRect();const c=Math.floor((e.clientX-r.left)*SZ/r.width);const rr=Math.floor((e.clientY-r.top)*SZ/r.height);moveTile(rr,c)});
+document.addEventListener('keydown',e=>{const key=e.key;if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(key))return;e.preventDefault();const moves={ArrowUp:[1,0],ArrowDown:[-1,0],ArrowLeft:[0,1],ArrowRight:[0,-1]};const[dr,dc]=moves[key];const nr=emptyR+dr,nc=emptyC+dc;if(nr>=0&&nr<SZ&&nc>=0&&nc<SZ)moveTile(nr,nc)});
+document.getElementById('startBtn').addEventListener('click',()=>{clearInterval(timeInterval);init()});
+init();
+</script></body></html>

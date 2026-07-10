@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打砖块 🧱</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff}
+.header h1{font-size:24px;font-weight:700}.score-box{background:rgba(255,255,255,0.1);padding:8px 18px;border-radius:12px;font-size:16px;font-weight:600}
+.score-box span{color:#fbbf24}canvas{display:block;margin:0 auto;border-radius:12px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
+.controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
+.controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="header"><h1>🧱 打砖块</h1><div class="score-box">🏆 得分 <span id="score">0</span></div></div>
+  <canvas id="gameCanvas" width="480" height="360"></canvas>
+  <div class="controls">
+    <button class="primary" id="startBtn">开始游戏</button>
+    <button id="restartBtn">重新开始</button>
+  </div>
+  <div class="status" id="status">🖱 鼠标左右移动球拍 · 别让球掉下去！</div>
+</div>
+<script>
+const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),S=document.getElementById('score'),ST=document.getElementById('status');
+const W=480,H=360,R=5,BH=14,BW=45,PW=80,PB=8,BS=6,PR=6;
+let bricks,paddleX,ballX,ballY,bvx,bvy,score,running,gameOver,loop,waiting,level;
+const COLORS=['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#a855f7','#ec4899'];
+function init(){level=1;setupLevel();paddleX=W/2-PW/2;score=0;S.textContent='0';running=false;gameOver=false;ST.textContent='🖱 鼠标移动球拍 · 按开始按钮发射球';document.getElementById('startBtn').textContent='开始游戏';resetBall();draw()}
+function setupLevel(){bricks=[];const rows=5+Math.min(level-1,3);const cols=Math.floor(W/(BW+4));const tw=cols*(BW+4);const ox=(W-tw)/2;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){bricks.push({x:ox+c*(BW+4),y:20+r*(BH+4),w:BW,h:BH,color:COLORS[(r+level)%COLORS.length],alive:true})}}
+function resetBall(){ballX=W/2;ballY=H-30;const a=-Math.PI/4+Math.random()*Math.PI/2;bvx=Math.cos(a)*BS;bvy=-Math.abs(Math.sin(a)*BS);waiting=true}
+function draw(){X.clearRect(0,0,W,H);
+bricks.forEach(b=>{if(!b.alive)return;X.beginPath();X.roundRect(b.x+1,b.y+1,b.w-2,b.h-2,3);X.fillStyle=b.color;X.fill();X.fillStyle='rgba(255,255,255,0.15)';X.beginPath();X.roundRect(b.x+3,b.y+2,b.w-8,b.h/3,2);X.fill()});
+X.beginPath();X.roundRect(paddleX,H-10-PB,PW,PB,PR);const g=X.createLinearGradient(paddleX,H-10-PB,paddleX+PW,H-10);g.addColorStop(0,'#6366f1');g.addColorStop(1,'#a78bfa');X.fillStyle=g;X.fill();
+X.fillStyle='#fff';X.beginPath();X.arc(ballX,ballY,5,0,Math.PI*2);X.fill();X.fillStyle='rgba(255,255,255,0.3)';X.beginPath();X.arc(ballX-2,ballY-2,3,0,Math.PI*2);X.fill()}
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,rr){this.moveTo(x+rr,y);this.lineTo(x+w-rr,y);this.quadraticCurveTo(x+w,y,x+w,y+rr);this.lineTo(x+w,y+h-rr);this.quadraticCurveTo(x+w,y+h,x+w-rr,y+h);this.lineTo(x+rr,y+h);this.quadraticCurveTo(x,y+h,x,y+h-rr);this.lineTo(x,y+rr);this.quadraticCurveTo(x,y,x+rr,y)}}
+function update(){if(!running||gameOver)return;
+if(waiting){ballX=paddleX+PW/2;ballY=H-10-PB-5;draw();return}
+ballX+=bvx;ballY+=bvy;
+if(ballX<5||ballX>W-5){bvx=-bvx}
+if(ballY<5){bvy=-bvy}
+if(ballY>H+10){gameOver=true;running=false;clearInterval(loop);ST.textContent='💀 球掉了！得分: '+score;document.getElementById('startBtn').textContent='🔄 再来一次';draw();return}
+if(ballY+5>=H-10-PB&&ballY+5<=H-10&&ballX+5>=paddleX&&ballX-5<=paddleX+PW){bvy=-Math.abs(bvy);const off=(ballX-(paddleX+PW/2))/(PW/2);bvx+=off*1.5;const sp=Math.sqrt(bvx*bvx+bvy*bvy);if(sp>8){bvx=bvx/sp*8;bvy=bvy/sp*8}ballY=H-10-PB-5}
+bricks.forEach(b=>{if(!b.alive)return;if(ballX+5>b.x&&ballX-5<b.x+b.w&&ballY+5>b.y&&ballY-5<b.y+b.h){b.alive=false;score+=10*level;S.textContent=score;const overlap=[];overlap.push((ballX-b.x-b.w));overlap.push((b.x-ballX));overlap.push((ballY-b.y-b.h));overlap.push((b.y-ballY));const mi=overlap.indexOf(Math.max(...overlap));if(mi===0||mi===1)bvx=-bvx;else bvy=-bvy;const sp=Math.sqrt(bvx*bvx+bvy*bvy);if(sp<10){bvx=bvx/sp*10*0.5;bvy=bvy/sp*10*0.5}if(bricks.every(b2=>!b2.alive)){running=false;clearInterval(loop);level++;ST.textContent='🎉 过关！进入第 '+level+' 关';document.getElementById('startBtn').textContent='▶ 下一关';draw();return}}});
+draw()}
+function startGame(){if(gameOver&&document.getElementById('startBtn').textContent.includes('再来')){init()}
+if(document.getElementById('startBtn').textContent.includes('下一关')){setupLevel();resetBall();running=true;gameOver=false;document.getElementById('startBtn').textContent='▶ 游戏中';ST.textContent='';loop=setInterval(update,16);draw();return}
+if(running)return;if(document.getElementById('startBtn').textContent.includes('开始')){init()}
+running=true;gameOver=false;waiting=true;resetBall();document.getElementById('startBtn').textContent='▶ 游戏中';ST.textContent='点击鼠标发射球';loop=setInterval(update,16);draw()}
+document.getElementById('startBtn').addEventListener('click',startGame);document.getElementById('restartBtn').addEventListener('click',()=>{clearInterval(loop);init()});
+C.addEventListener('mousemove',e=>{const r=C.getBoundingClientRect();paddleX=Math.max(0,Math.min(W-PW,(e.clientX-r.left)*W/r.width))});
+C.addEventListener('click',e=>{if(waiting&&running){waiting=false;ST.textContent=''}});
+init();
+</script></body></html>

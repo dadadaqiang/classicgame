@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>记忆翻牌 🃏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;color:#fff}
+.header h1{font-size:24px;font-weight:700}.info{display:flex;gap:12px}
+.info div{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.info .pairs span{color:#34d399}.info .moves span{color:#fbbf24}
+canvas{display:block;margin:0 auto;border-radius:12px;background:#1a1a2e;box-shadow:inset 0 0 30px rgba(0,0,0,0.5)}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+.controls button{padding:10px 28px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.1);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15)}
+.controls button:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}
+.controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="header"><h1>🃏 记忆翻牌</h1><div class="info"><div class="pairs">配对 <span id="pairs">0</span>/8</div><div class="moves">翻牌 <span id="moves">0</span></div></div></div>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  <div class="controls">
+    <button class="primary" id="startBtn">新游戏</button>
+  </div>
+  <div class="status" id="status">记住牌的位置 · 翻出相同的配对</div>
+</div>
+<script>
+const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),pE=document.getElementById('pairs'),mE=document.getElementById('moves'),ST=document.getElementById('status');
+const ROWS=4,COLS=4,CELL=C.width/COLS,R=8;
+const EMOJIS=['🐶','🐱','🐼','🦊','🐸','🦄','🐙','🦋','🐶','🐱','🐼','🦊','🐸','🦄','🐙','🦋'];
+let cards,flipped,moves,pairs,locked,gameOver;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function init(){cards=[];const em=shuffle([...EMOJIS]);let idx=0;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)cards.push({emoji:em[idx++],flipped:false,matched:false});flipped=[];moves=0;pairs=0;locked=false;gameOver=false;pE.textContent='0/8';mE.textContent='0';ST.textContent='记住牌的位置 · 翻出相同的配对';draw()}
+function draw(){X.clearRect(0,0,C.width,C.height);
+for(let i=0;i<cards.length;i++){const c=cards[i];const x=(i%COLS)*CELL,y=Math.floor(i/COLS)*CELL;
+X.beginPath();X.roundRect(x+2,y+2,CELL-4,CELL-4,R);
+if(c.matched){X.fillStyle='rgba(52,211,153,0.2)';X.fill()}
+else if(c.flipped){const g=X.createLinearGradient(x,y,x+CELL,y+CELL);g.addColorStop(0,'#1e293b');g.addColorStop(1,'#0f172a');X.fillStyle=g;X.fill();X.font='28px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText(c.emoji,x+CELL/2,y+CELL/2+1)}
+else{const g=X.createLinearGradient(x,y,x+CELL,y+CELL);g.addColorStop(0,'#6366f1');g.addColorStop(1,'#4f46e5');X.fillStyle=g;X.fill();X.fillStyle='rgba(255,255,255,0.1)';X.beginPath();X.roundRect(x+6,y+5,CELL-12,CELL/4,2);X.fill();X.fillStyle='rgba(255,255,255,0.05)';X.font='24px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText('?',x+CELL/2,y+CELL/2+1)}}
+if(gameOver){X.fillStyle='rgba(0,0,0,0.25)';X.fillRect(0,0,C.width,C.height);X.fillStyle='#fff';X.font='bold 32px sans-serif';X.textAlign='center';X.textBaseline='middle';X.fillText('🎉 通关！',C.width/2,C.height/2)}}
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,rr){this.moveTo(x+rr,y);this.lineTo(x+w-rr,y);this.quadraticCurveTo(x+w,y,x+w,y+rr);this.lineTo(x+w,y+h-rr);this.quadraticCurveTo(x+w,y+h,x+w-rr,y+h);this.lineTo(x+rr,y+h);this.quadraticCurveTo(x,y+h,x,y+h-rr);this.lineTo(x,y+rr);this.quadraticCurveTo(x,y,x+rr,y)}}
+function flip(idx){if(locked||gameOver||cards[idx].matched||cards[idx].flipped)return;
+cards[idx].flipped=true;flipped.push(idx);draw();
+if(flipped.length===2){moves++;mE.textContent=moves;locked=true;
+const[a,b]=flipped;if(cards[a].emoji===cards[b].emoji){cards[a].matched=true;cards[b].matched=true;pairs++;pE.textContent=pairs+'/8';flipped=[];locked=false;if(pairs===8){gameOver=true;ST.textContent=`🎉 恭喜通关！用了 ${moves} 次翻牌`;draw()}return}
+setTimeout(()=>{cards[a].flipped=false;cards[b].flipped=false;flipped=[];locked=false;draw()},800)}}
+C.addEventListener('click',e=>{const r=C.getBoundingClientRect();const c=Math.floor((e.clientX-r.left)*COLS/r.width);const rr=Math.floor((e.clientY-r.top)*ROWS/r.height);if(rr>=0&&rr<ROWS&&c>=0&&c<COLS)flip(rr*COLS+c)});
+document.getElementById('startBtn').addEventListener('click',init);
+init();
+</script></body></html>
