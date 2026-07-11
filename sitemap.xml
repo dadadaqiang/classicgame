@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://game.455545.xyz/</loc><priority>1.0</priority></url>
+  <url><loc>https://game.455545.xyz/snake.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/tetris.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/2048.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/dino.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/pong.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/minesweeper.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/breakout.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/slidepuzzle.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/gomoku.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/memory.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/flappybird.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/tictactoe.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/othello.html</loc><priority>0.8</priority></url>
+  <url><loc>https://game.455545.xyz/darkroom/index.html</loc><priority>0.7</priority></url>
+</urlset>
