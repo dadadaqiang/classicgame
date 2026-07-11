@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-21XQJTFMHR"></script>
 <script>
@@ -34,19 +36,50 @@ body{min-height:100vh;display:flex;justify-content:center;align-items:center;bac
 .controls button:active{transform:translateY(0)}
 .controls button.primary{background:#6366f1;border-color:#6366f1}.controls button.primary:hover{background:#4f46e5}
 .status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}.page-footer{text-align:center;color:rgba(255,255,255,0.15);font-size:11px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06)}
+.related-games{margin-top:28px;padding:20px;background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.06)}
+.related-title{font-size:15px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:12px}
+.related-links{display:flex;flex-wrap:wrap;gap:10px}
+.related-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:600;padding:6px 14px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);transition:all .2s}
+.related-links a:hover{background:rgba(255,255,255,0.12);color:#fff;transform:translateY(-2px)}
 @media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
 </style>
 </head>
 <body>
 <div class="game-wrapper">
-  <div class="header"><a href="index.html" class="back-btn">← 游戏厅</a><h1>🐦 Flappy Bird</h1><div class="score-box">🏆 得分 <span id="score">0</span></div></div>
+  <header class="header"><a href="index.html" class="back-btn" aria-label="返回游戏厅">← 游戏厅</a><h1>🐦 Flappy Bird</h1><div class="score-box">🏆 得分 <span id="score">0</span></div></header>
+  <main>
   <canvas id="gameCanvas" width="400" height="500"></canvas>
   <div class="controls">
     <button class="primary" id="startBtn">开始游戏</button>
   </div>
   <div class="status" id="status">点击 / 按 空格/↑ 飞行 · 躲避管道</div>
-  <div class="page-footer">🎮 经典游戏厅 · 14 合 1</div>
+  </main>
+  <footer class="page-footer">🎮 经典游戏厅 · 14 合 1</footer>
 </div>
+
+<div class="related-games">
+  <div class="related-title">🎮 更多好玩游戏</div>
+  <div class="related-links">
+    <a href="snake.html">🐍 贪吃蛇</a>
+    <a href="tetris.html">🧱 俄罗斯方块</a>
+    <a href="2048.html">🀄 2048</a>
+    <a href="dino.html">🦖 恐龙跳跳</a>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Flappy Bird",
+  "url": "https://game.455545.xyz/flappybird.html",
+  "description": "在线玩 Flappy Bird 游戏！点击或按空格控制小鸟飞行穿过管道，挑战最高分。免费 HTML5 小游戏。",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
+
 <script>
 const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),S=document.getElementById('score'),ST=document.getElementById('status');
 const W=400,H=500,G=0.4,FLAP=-7,BIRD_R=12,GAP=130,PW=50,PS=2.5;

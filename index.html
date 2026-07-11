@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-21XQJTFMHR"></script>
 <script>
@@ -40,10 +42,13 @@ body{min-height:100vh;display:flex;flex-direction:column;align-items:center;back
 </style>
 </head>
 <body>
-<div class="title">🎮 经典游戏厅</div>
-<div class="subtitle">14 合 1 · 选一个开玩！</div>
+<header>
+  <div class="title">🎮 经典游戏厅</div>
+  <div class="subtitle">14 合 1 · 选一个开玩！</div>
+</header>
 
-<div class="games">
+<main>
+<nav class="games">
   <a class="card" href="snake.html">
     <div class="icon">🐍</div>
     <div class="name">贪吃蛇</div>
@@ -114,8 +119,24 @@ body{min-height:100vh;display:flex;flex-direction:column;align-items:center;back
     <div class="name">黑白棋</div>
     <span class="tag">VS AI</span>
   </a>
-</div>
+</nav>
+</main>
 
-<div class="footer">Pi · 经典游戏厅 · 14 合 1</div>
+<footer class="footer">🎮 经典游戏厅 · 14 合 1</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "经典游戏厅",
+  "url": "https://game.455545.xyz/",
+  "description": "14 款经典免费在线小游戏合集：贪吃蛇、俄罗斯方块、2048、扫雷、五子棋、Flappy Bird 等。打开即玩，无需下载。",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://game.455545.xyz/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 </body>
 </html>

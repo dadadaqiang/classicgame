@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-21XQJTFMHR"></script>
 <script>
@@ -34,20 +36,51 @@ body{min-height:100vh;display:flex;justify-content:center;align-items:center;bac
 .controls button.primary{background:#6366f1;border-color:#6366f1}
 .controls button.primary:hover{background:#4f46e5}
 .status{text-align:center;color:rgba(255,255,255,0.6);font-size:14px;margin-top:14px;min-height:22px}
+.related-games{margin-top:28px;padding:20px;background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.06)}
+.related-title{font-size:15px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:12px}
+.related-links{display:flex;flex-wrap:wrap;gap:10px}
+.related-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:600;padding:6px 14px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);transition:all .2s}
+.related-links a:hover{background:rgba(255,255,255,0.12);color:#fff;transform:translateY(-2px)}
 @media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}canvas{max-width:100%}}
 </style>
 </head>
 <body>
 <div class="game-wrapper">
-  <div class="header"><a href="index.html" class="back-btn">← 游戏厅</a><h1>🏓 乒乓球</h1><div><span class="score-box" style="margin-right:8px">你 <span id="playerScore">0</span></span><span class="score-box">AI <span id="aiScore">0</span></span></div></div>
+  <header class="header"><a href="index.html" class="back-btn" aria-label="返回游戏厅">← 游戏厅</a><h1>🏓 乒乓球</h1><div><span class="score-box" style="margin-right:8px">你 <span id="playerScore">0</span></span><span class="score-box">AI <span id="aiScore">0</span></span></div></header>
+  <main>
   <canvas id="gameCanvas" width="600" height="400"></canvas>
   <div class="controls">
     <button class="primary" id="startBtn">开始游戏</button>
     <button id="restartBtn">重新开始</button>
   </div>
   <div class="status" id="status">🖱 鼠标移动球拍 · 先到 5 分获胜</div>
-  <div class="page-footer">🎮 经典游戏厅 · 14 合 1</div>
+  </main>
+  <footer class="page-footer">🎮 经典游戏厅 · 14 合 1</footer>
 </div>
+
+<div class="related-games">
+  <div class="related-title">🎮 更多好玩游戏</div>
+  <div class="related-links">
+    <a href="breakout.html">🧱 打砖块</a>
+    <a href="snake.html">🐍 贪吃蛇</a>
+    <a href="dino.html">🦖 恐龙跳跳</a>
+    <a href="flappybird.html">🐦 Flappy Bird</a>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "乒乓球",
+  "url": "https://game.455545.xyz/pong.html",
+  "description": "在线玩经典乒乓球游戏！与 AI 对战，用鼠标或触摸控制球拍。免费 HTML5 小游戏。",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
+
 <script>
 const C=document.getElementById('gameCanvas'),X=C.getContext('2d'),pS=document.getElementById('playerScore'),aS=document.getElementById('aiScore'),ST=document.getElementById('status');
 const PW=10,PH=70,BS=8;let W,H,pY,aY,bX,bY,bVX,bVY,pScore,aScore,running,gameOver,loop,winner;

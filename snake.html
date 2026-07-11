@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-21XQJTFMHR"></script>
 <script>
@@ -95,6 +97,11 @@
     min-height: 22px;
   }
   .page-footer { text-align:center; color:rgba(255,255,255,0.15); font-size:11px; margin-top:18px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.06); }
+  .related-games { margin-top: 28px; padding: 20px; background: rgba(255,255,255,0.04); border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); }
+  .related-title { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.6); margin-bottom: 12px; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .related-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 14px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s; }
+  .related-links a:hover { background: rgba(255,255,255,0.12); color: #fff; transform: translateY(-2px); }
   @media (max-width: 500px) {
     .game-wrapper { padding: 16px; border-radius: 16px; }
     .header h1 { font-size: 18px; }
@@ -105,12 +112,13 @@
 <body>
 
 <div class="game-wrapper">
-  <div class="header">
-    <a href="index.html" class="back-btn">← 游戏厅</a>
+  <header class="header">
+    <a href="index.html" class="back-btn" aria-label="返回游戏厅">← 游戏厅</a>
     <h1>🐍 贪吃蛇</h1>
     <div class="score-box">🏆 得分 <span id="score">0</span></div>
-  </div>
+  </header>
 
+  <main>
   <canvas id="gameCanvas" width="400" height="400"></canvas>
 
   <div class="controls">
@@ -119,8 +127,33 @@
   </div>
 
   <div class="status" id="status">← ↑ → ↓ 方向键控制移动</div>
-  <div class="page-footer">🎮 经典游戏厅 · 14 合 1</div>
+  </main>
+  <footer class="page-footer">🎮 经典游戏厅 · 14 合 1</footer>
 </div>
+
+<!-- 内链推荐 -->
+<div class="related-games">
+  <div class="related-title">🎮 更多好玩游戏</div>
+  <div class="related-links">
+    <a href="2048.html">🀄 2048</a>
+    <a href="tetris.html">🧱 俄罗斯方块</a>
+    <a href="minesweeper.html">💣 扫雷</a>
+    <a href="flappybird.html">🐦 Flappy Bird</a>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "贪吃蛇",
+  "url": "https://game.455545.xyz/snake.html",
+  "description": "在线玩经典贪吃蛇游戏！方向键控制蛇吃食物，每吃一个得分，不要撞墙或咬到自己。免费 HTML5 小游戏。",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
 
 <script>
 const canvas = document.getElementById('gameCanvas');

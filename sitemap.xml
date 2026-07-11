@@ -15,4 +15,5 @@
   <url><loc>https://game.455545.xyz/tictactoe.html</loc><priority>0.8</priority></url>
   <url><loc>https://game.455545.xyz/othello.html</loc><priority>0.8</priority></url>
   <url><loc>https://game.455545.xyz/darkroom/index.html</loc><priority>0.7</priority></url>
+  <url><loc>https://game.455545.xyz/404.html</loc><priority>0.3</priority></url>
 </urlset>
