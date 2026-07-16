@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<meta name="google-site-verification" content="6S9Th-tZ2kJZpoeU9ZdOXGIwV1RbpvFt8_RO2uyBTyk" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-21XQJTFMHR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-21XQJTFMHR');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>吃豆人 🟡 - 在线玩经典街机游戏</title>
+<meta name="description" content="在线玩经典吃豆人游戏！穿越迷宫、吃掉豆子、躲避幽灵。免费 HTML5 小游戏，支持键盘和触屏。">
+<link rel="canonical" href="https://game.455545.xyz/pacman.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+<meta property="og:title" content="吃豆人 🟡 - 在线玩经典街机游戏">
+<meta property="og:description" content="在线玩经典吃豆人游戏！穿越迷宫、吃掉豆子、躲避幽灵。免费 HTML5 小游戏。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://game.455545.xyz/pacman.html">
+<meta property="og:image" content="https://game.455545.xyz/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);font-family:'Segoe UI',system-ui,sans-serif}
+.game-wrapper{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1)}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;color:#fff;gap:10px}
+.back-btn{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;flex-shrink:0;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,0.06)}.back-btn:hover{color:#fff;background:rgba(255,255,255,0.12)}
+.header h1{flex:1;font-size:24px;font-weight:700;white-space:nowrap}
+.score-group{display:flex;gap:8px;align-items:center}
+.score-box{background:rgba(255,255,255,0.1);padding:6px 14px;border-radius:12px;font-size:14px;font-weight:600;white-space:nowrap}
+.score-box span{color:#fbbf24}
+.lives-box{display:flex;gap:2px;font-size:18px;line-height:1;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.05)}
+canvas{display:block;margin:0 auto;border-radius:12px;background:#000;box-shadow:inset 0 0 30px rgba(0,0,0,0.5);image-rendering:pixelated;touch-action:none;width:100%;height:auto}
+.canvas-wrap{position:relative;display:inline-block;width:100%}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-size:22px;color:#ffff00;text-align:center;padding:20px;background:rgba(0,0,0,0.6);border-radius:12px;cursor:pointer;z-index:10}
+.overlay .sub{font-size:13px;color:rgba(255,255,255,0.5)}
+.overlay .hi{font-size:15px;color:#fff}
+.dpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;justify-items:center;align-items:center;max-width:200px;margin:14px auto 0}
+.dpad-btn{width:56px;height:56px;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);color:#ffff00;font-size:26px;line-height:1;border-radius:14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.dpad-btn:active{background:rgba(255,255,255,0.15);color:#fff}
+.dpad-spacer{width:56px;height:56px}
+.controls-row{display:flex;justify-content:center;gap:12px;margin-top:14px}
+.controls-row button{padding:8px 22px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.08);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.12)}
+.controls-row button:hover{background:rgba(255,255,255,0.16);transform:translateY(-2px)}
+.controls-row button.primary{background:#6366f1;border-color:#6366f1}
+.controls-row button.primary:hover{background:#4f46e5}
+.status{text-align:center;color:rgba(255,255,255,0.5);font-size:13px;margin-top:12px;min-height:20px}
+.page-footer{text-align:center;color:rgba(255,255,255,0.15);font-size:11px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)}
+.related-games{margin-top:24px;padding:18px;background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.06)}
+.related-title{font-size:14px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:10px}
+.related-links{display:flex;flex-wrap:wrap;gap:8px}
+.related-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:600;padding:5px 12px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);transition:all .2s}
+.related-links a:hover{background:rgba(255,255,255,0.12);color:#fff;transform:translateY(-2px)}
+@media(max-width:500px){.game-wrapper{padding:16px}.header h1{font-size:18px}.score-box{font-size:12px;padding:4px 10px}.dpad-btn{width:48px;height:48px;font-size:22px}.dpad-spacer{width:48px;height:48px}}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <header class="header">
+    <a href="index.html" class="back-btn" aria-label="返回游戏厅">← 游戏厅</a>
+    <h1>🟡 吃豆人</h1>
+    <div class="score-group">
+      <span class="lives-box" id="lives"></span>
+      <span class="score-box">🏆 <span id="score">0</span></span>
+    </div>
+  </header>
+  <main>
+    <div class="canvas-wrap">
+      <canvas id="game" width="420" height="520"></canvas>
+      <div class="overlay" id="overlay">
+        <div>🟡 吃豆人</div>
+        <div class="sub">点击或按方向键开始</div>
+      </div>
+    </div>
+
+    <div class="dpad" id="dpad" aria-label="方向键">
+      <div class="dpad-spacer"></div>
+      <button class="dpad-btn" data-dir="up" aria-label="上">▲</button>
+      <div class="dpad-spacer"></div>
+      <button class="dpad-btn" data-dir="left" aria-label="左">◀</button>
+      <div class="dpad-spacer"></div>
+      <button class="dpad-btn" data-dir="right" aria-label="右">▶</button>
+      <div class="dpad-spacer"></div>
+      <button class="dpad-btn" data-dir="down" aria-label="下">▼</button>
+      <div class="dpad-spacer"></div>
+    </div>
+
+    <div class="controls-row">
+      <button class="primary" id="startBtn">开始游戏</button>
+      <button id="restartBtn">重新开始</button>
+    </div>
+
+    <div class="status" id="status">← ↑ → ↓ / WASD 移动 · P 暂停</div>
+  </main>
+  <footer class="page-footer">🎮 经典游戏厅</footer>
+</div>
+
+<div class="related-games">
+  <div class="related-title">🎮 更多好玩游戏</div>
+  <div class="related-links">
+    <a href="snake.html">🐍 贪吃蛇</a>
+    <a href="tetris.html">🧱 俄罗斯方块</a>
+    <a href="dino.html">🦖 恐龙跳跳</a>
+    <a href="2048.html">🀄 2048</a>
+    <a href="minesweeper.html">💣 扫雷</a>
+    <a href="breakout.html">🧱 打砖块</a>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "吃豆人",
+  "url": "https://game.455545.xyz/pacman.html",
+  "description": "在线玩经典吃豆人游戏！穿越迷宫、吃掉豆子、躲避幽灵。免费 HTML5 小游戏。",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
+
+<script>
+const C=document.getElementById('game'),X=C.getContext('2d'),scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),overlay=document.getElementById('overlay'),statusEl=document.getElementById('status'),startBtn=document.getElementById('startBtn'),restartBtn=document.getElementById('restartBtn'),dpadBtns=document.querySelectorAll('.dpad-btn');
+
+const T=20,COLS=21,ROWS=26;
+C.width=COLS*T;C.height=ROWS*T;
+let grid=[],score=0,lives=3,level=1,totalDots=0,dotsEaten=0;
+let gameState='start',ghostFrightened=0,ghostEatCombo=0,collectedFruits=[],highScore=0;
+let fruit=null,fruitSpawned1=false,fruitSpawned2=false;
+let modePhase=0,modeTick=0,currentMode='scatter';
+let tick=0,readyTimer=0,popups=[];
+
+const MAP=[
+"WWWWWWWWWWWWWWWWWWWWW",
+"W.........W.........W",
+"W.WWW.WWW.W.WWW.WWW.W",
+"WoW W.W W.W.W W.W WoW",
+"W.WWW.WWW.W.WWW.WWW.W",
+"W...................W",
+"W.WWW.W.WWWWW.W.WWW.W",
+"W.WWW.W.WWWWW.W.WWW.W",
+"W.....W...W...W.....W",
+"WWWWW.WWW-W-WWW.WWWWW",
+"----W.W-------W.W----",
+"----W.W-GGDGG-W.W----",
+"WWWWW.W-G---G-W.WWWWW",
+"------.-G---G-.------",
+"WWWWW.W-G---G-W.WWWWW",
+"----W.W-GGGGG-W.W----",
+"----W.W-------W.W----",
+"WWWWW.W-WWWWW-W.WWWWW",
+"W.........W.........W",
+"W.WWW.WWW.W.WWW.WWW.W",
+"Wo..W...........W..oW",
+"WWW.W.W.WWWWW.W.WWW.W",
+"W.....W...W...W.....W",
+"W.WWWWWWW.W.WWWWWWW.W",
+"W...................W",
+"WWWWWWWWWWWWWWWWWWWWW",
+];
+function parseCell(ch){if(ch==='W')return 0;if(ch==='.')return 1;if(ch==='o')return 3;if(ch==='-')return 2;if(ch==='G')return 4;if(ch==='D')return 5;return 2}
+const DIRS=['up','down','left','right'];
+const OPPO={up:'down',down:'up',left:'right',right:'left'};
+const FRUITS=[{name:'樱桃',emoji:'🍒',pts:100},{name:'草莓',emoji:'🍓',pts:300},{name:'橙子',emoji:'🍊',pts:500},{name:'苹果',emoji:'🍎',pts:700},{name:'葡萄',emoji:'🍇',pts:1000},{name:'桃子',emoji:'🍑',pts:2000},{name:'铃铛',emoji:'🔔',pts:3000},{name:'钥匙',emoji:'🔑',pts:5000}];
+const SCATTER=[{x:19,y:0},{x:1,y:0},{x:19,y:25},{x:1,y:25}];
+const MODE_SCHEDULE=[{scatter:420,chase:1200},{scatter:420,chase:1200},{scatter:300,chase:1200},{scatter:1,chase:Infinity}];
+function lvCfg(l){const lv=Math.min(l,21);return{pacSpeed:Math.max(4,6-Math.floor(lv/4)),ghostSpeed:Math.max(5,7-Math.floor(lv/3)),frightSpeed:Math.max(7,11-Math.floor(lv/3)),frightDuration:Math.max(180,300-(lv-1)*15)}}
+const PAC_ST={x:10,y:18};let pac={x:10,y:18,dir:'left',nextDir:'left',mouth:0,mDir:1};
+const GCLR=['#ff0000','#ffb8ff','#00ffff','#ffb852'];const GNM=['blinky','pinky','inky','clyde'];
+let ghosts=[];
+
+function initGhosts(){ghosts=[
+{x:10,y:11,dir:'left',clr:GCLR[0],nm:'blinky',mode:'chase',home:false,startT:0,idx:0},
+{x:9,y:13,dir:'up',clr:GCLR[1],nm:'pinky',mode:'house',home:true,startT:120,idx:1},
+{x:10,y:13,dir:'up',clr:GCLR[2],nm:'inky',mode:'house',home:true,startT:240,idx:2},
+{x:11,y:13,dir:'up',clr:GCLR[3],nm:'clyde',mode:'house',home:true,startT:360,idx:3},
+]}
+
+function isWalk(x,y,ghost){
+if(y<0||y>=ROWS)return 0;if(x<0||x>=COLS)return 1;const c=grid[y][x];
+return c!==0&&c!==4&&(c!==5||!!ghost)}
+function canMv(x,y,d,ghost){let nx=x,ny=y;if(d==='left')nx--;if(d==='right')nx++;if(d==='up')ny--;if(d==='down')ny++;return isWalk(nx,ny,ghost)}
+function doMv(e,d){if(d==='left')e.x--;if(d==='right')e.x++;if(d==='up')e.y--;if(d==='down')e.y++;if(e.x<0)e.x=COLS-1;if(e.x>=COLS)e.x=0}
+
+function gTarget(g){
+if(ghostFrightened>0)return{x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};
+if(currentMode==='scatter')return SCATTER[g.idx];
+switch(g.nm){
+case'blinky':return{x:pac.x,y:pac.y};
+case'pinky':let px=pac.x,py=pac.y;if(pac.dir==='left')px-=4;else if(pac.dir==='right')px+=4;else if(pac.dir==='up'){py-=4;px-=4}else py+=4;return{x:px,y:py};
+case'inky':let ax=pac.x,ay=pac.y;if(pac.dir==='left')ax-=2;else if(pac.dir==='right')ax+=2;else if(pac.dir==='up')ay-=2;else ay+=2;const bl=ghosts[0];return{x:ax+(ax-bl.x),y:ay+(ay-bl.y)};
+case'clyde':const d=Math.abs(g.x-pac.x)+Math.abs(g.y-pac.y);if(d>8)return{x:pac.x,y:pac.y};return SCATTER[3];
+default:return{x:pac.x,y:pac.y}}
+}
+
+function ghostAI(g){
+if(g.mode==='house'){if(tick>=g.startT){g.x=10;g.y=11;g.mode=currentMode;g.home=false;g.dir='left'}return}
+const t=gTarget(g),ops=[];
+for(const d of DIRS){if(d===OPPO[g.dir])continue;if(canMv(g.x,g.y,d,1))ops.push(d)}
+if(!ops.length){const r=OPPO[g.dir];if(canMv(g.x,g.y,r,1))ops.push(r)}
+if(!ops.length)return;let bestD=ops[0],best=Infinity,flee=ghostFrightened>0;
+for(const d of ops){let nx=g.x+(d==='left'?-1:d==='right'?1:0),ny=g.y+(d==='up'?-1:d==='down'?1:0);if(nx<0)nx=COLS-1;if(nx>=COLS)nx=0;const dist=(nx-t.x)**2+(ny-t.y)**2;if(flee?dist>best:dist<best){best=dist;bestD=d}}
+g.dir=bestD;doMv(g,g.dir)}
+
+function buildGrid(){grid=[];totalDots=0;dotsEaten=0;for(let r=0;r<ROWS;r++){grid[r]=[];for(let c=0;c<COLS;c++){grid[r][c]=parseCell(MAP[r][c]);if(grid[r][c]===1||grid[r][c]===3)totalDots++}}}
+function resetPos(){pac={x:PAC_ST.x,y:PAC_ST.y,dir:'left',nextDir:'left',mouth:0,mDir:1};initGhosts();modePhase=0;modeTick=0;currentMode='scatter'}
+function addPop(x,y,txt,clr){popups.push({x:x*T+T/2,y:y*T+T/2,txt,clr,life:60})}
+
+// Drawing
+function drawWall(x,y){X.fillStyle='#2121de';X.fillRect(x*T+1,y*T+1,T-2,T-2)}
+function drawGhostWall(x,y){X.fillStyle='#444';X.fillRect(x*T+1,y*T+1,T-2,T-2)}
+function drawGhostDoor(x,y){X.fillStyle='#ffb8ae';X.fillRect(x*T+1,y*T+T/2-2,T-2,4)}
+function drawDot(x,y){X.fillStyle='#ffb8ae';X.beginPath();X.arc(x*T+T/2,y*T+T/2,2,0,Math.PI*2);X.fill()}
+function drawPower(x,y,t){if(Math.floor(t/15)%2===0){X.fillStyle='#ffb8ae';X.beginPath();X.arc(x*T+T/2,y*T+T/2,6,0,Math.PI*2);X.fill()}}
+function drawFruit(){if(!fruit)return;const ft=FRUITS[fruit.ti];X.font=(T-2)+'px serif';X.textAlign='center';X.textBaseline='middle';X.fillText(ft.emoji,fruit.x*T+T/2,fruit.y*T+T/2)}
+function drawPac(){const cx=pac.x*T+T/2,cy=pac.y*T+T/2,m=pac.mouth*0.45;let a=0;if(pac.dir==='right')a=0;else if(pac.dir==='left')a=Math.PI;else if(pac.dir==='up')a=Math.PI*1.5;else a=Math.PI*0.5;X.fillStyle='#ffff00';X.beginPath();X.moveTo(cx,cy);X.arc(cx,cy,T/2+2,a+m,a+Math.PI*2-m);X.closePath();X.fill()}
+function drawGhost(g){
+const cx=g.x*T+T/2,cy=g.y*T+T/2,r=T/2+1,fr=ghostFrightened>0,fl=fr&&ghostFrightened<60&&Math.floor(ghostFrightened/8)%2===0;
+X.fillStyle=fr?(fl?'#fff':'#2121de'):g.clr;X.beginPath();X.arc(cx,cy-2,r,Math.PI,0);X.lineTo(cx+r,cy+r-2);
+for(let i=0;i<4;i++){const sx=cx+r-(i*2+1)*(r/4),ex=cx+r-(i*2+2)*(r/4);X.lineTo(sx,cy+r+3);X.lineTo(ex,cy+r-2)}
+X.closePath();X.fill();
+if(!fr){X.fillStyle='#fff';X.beginPath();X.arc(cx-4,cy-3,4,0,Math.PI*2);X.arc(cx+4,cy-3,4,0,Math.PI*2);X.fill();const pdx=Math.sign(pac.x-g.x)*1.5,pdy=Math.sign(pac.y-g.y)*1.5;X.fillStyle='#2121de';X.beginPath();X.arc(cx-4+pdx,cy-3+pdy,2,0,Math.PI*2);X.arc(cx+4+pdx,cy-3+pdy,2,0,Math.PI*2);X.fill()
+}else{X.fillStyle=fr&&!fl?'#ffb8ae':'#f00';X.beginPath();X.arc(cx-3,cy-2,1.5,0,Math.PI*2);X.arc(cx+3,cy-2,1.5,0,Math.PI*2);X.fill();X.strokeStyle=fr&&!fl?'#ffb8ae':'#f00';X.lineWidth=1;X.beginPath();X.moveTo(cx-5,cy+3);for(let i=0;i<5;i++)X.lineTo(cx-5+i*2.5+1.25,cy+(i%2===0?5:2));X.stroke()}}
+function drawPopups(){for(const p of popups){X.globalAlpha=p.life/60;X.fillStyle=p.clr;X.font='bold 12px Courier New';X.textAlign='center';X.textBaseline='middle';X.fillText(p.txt,p.x,p.y-(60-p.life)*0.5);X.globalAlpha=1}}
+function drawReady(){X.fillStyle='#ffff00';X.font='bold 18px Courier New';X.textAlign='center';X.textBaseline='middle';X.fillText('READY!',C.width/2,13*T+T/2)}
+function updLives(){let s='';for(let i=0;i<lives;i++)s+='● ';livesEl.textContent=s}
+function updHigh(){if(score>highScore){highScore=score;try{window.localStorage.setItem('pacman_hs',highScore.toString())}catch{}return 1}return 0}
+function loadHS(){try{const v=Number.parseInt(window.localStorage.getItem('pacman_hs')||'0',10);return Number.isFinite(v)?v:0}catch{return 0}}
+
+function update(){
+if(gameState!=='playing')return;
+if(readyTimer>0){readyTimer--;return}
+tick++;
+if(ghostFrightened<=0){modeTick++;const ph=MODE_SCHEDULE[Math.min(modePhase,MODE_SCHEDULE.length-1)],th=currentMode==='scatter'?ph.scatter:ph.chase;if(modeTick>=th&&th!==Infinity){currentMode=currentMode==='scatter'?'chase':'scatter';modeTick=0;if(currentMode==='scatter')modePhase++;for(const g of ghosts){if(g.mode!=='house'){g.dir=OPPO[g.dir];g.mode=currentMode}}}}
+pac.mouth+=0.15*pac.mDir;if(pac.mouth>1)pac.mDir=-1;if(pac.mouth<0)pac.mDir=1;
+const cfg=lvCfg(level);
+if(tick%cfg.pacSpeed===0){
+if(canMv(pac.x,pac.y,pac.nextDir,0))pac.dir=pac.nextDir;
+if(canMv(pac.x,pac.y,pac.dir,0)){doMv(pac,pac.dir)
+const cell=grid[pac.y][pac.x];
+if(cell===1){grid[pac.y][pac.x]=2;score+=10;dotsEaten++;scoreEl.textContent=score;updHigh()}
+else if(cell===3){grid[pac.y][pac.x]=2;score+=50;dotsEaten++;scoreEl.textContent=score;updHigh();ghostFrightened=cfg.frightDuration;ghostEatCombo=0;for(const g of ghosts){if(g.mode!=='house')g.dir=OPPO[g.dir]}}
+if(fruit&&pac.x===fruit.x&&pac.y===fruit.y){const pts=FRUITS[fruit.ti].pts;score+=pts;scoreEl.textContent=score;updHigh();addPop(fruit.x,fruit.y,pts.toString(),'#fff');collectedFruits.push(fruit.ti);fruit=null}
+if(dotsEaten>=70&&!fruitSpawned1){fruitSpawned1=1;fruit={x:10,y:13,ti:Math.min(level-1,FRUITS.length-1),spawnT:tick}}
+if(dotsEaten>=170&&!fruitSpawned2){fruitSpawned2=1;fruit={x:10,y:13,ti:Math.min(level-1,FRUITS.length-1),spawnT:tick}}
+if(dotsEaten>=totalDots){level++;buildGrid();resetPos();fruit=null;fruitSpawned1=0;fruitSpawned2=0;ghostEatCombo=0;readyTimer=120;tick=0;scoreEl.textContent=score;return}}}
+if(fruit&&tick-fruit.spawnT>600)fruit=null;
+const gsp=ghostFrightened>0?cfg.frightSpeed:cfg.ghostSpeed;
+if(tick%gsp===0){for(const g of ghosts)ghostAI(g)}
+if(ghostFrightened>0)ghostFrightened--;
+popups=popups.filter(p=>{p.life--;return p.life>0});
+for(const g of ghosts){if(g.mode==='house')continue;if(g.x===pac.x&&g.y===pac.y){if(ghostFrightened>0){ghostEatCombo++;const pts=200*Math.pow(2,ghostEatCombo-1);score+=pts;scoreEl.textContent=score;updHigh();addPop(g.x,g.y,pts.toString(),'#00ffff');g.x=10;g.y=13;g.mode='house';g.home=true;g.startT=tick+120}else{lives--;updLives();if(lives<=0){gameState='lost';updHigh();showOver('💀 游戏结束','得分: '+score,'点击或按任意键再来一局');return}resetPos();readyTimer=90;return}}}
+}
+
+function draw(){
+X.fillStyle='#000';X.fillRect(0,0,C.width,C.height);
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const cl=grid[r][c];if(cl===0)drawWall(c,r);else if(cl===4)drawGhostWall(c,r);else if(cl===5)drawGhostDoor(c,r);else if(cl===1)drawDot(c,r);else if(cl===3)drawPower(c,r,tick)}
+drawFruit();
+if(gameState==='playing'){if(readyTimer>0){drawReady();drawPac();for(const g of ghosts){if(g.mode!=='house')drawGhost(g)}}
+else{drawPac();for(const g of ghosts){if(g.mode!=='house')drawGhost(g);else if(tick>=g.startT-60)drawGhost(g)}}drawPopups()}
+}
+
+function step(){update();draw()}
+function loop(){step();requestAnimationFrame(loop)}
+
+function showOver(title,sub,detail){
+let html=`<div>${title}</div>`;
+if(detail)html+=`<div class="hi">${detail}</div>`;
+if(sub)html+=`<div class="sub">${sub}</div>`;
+overlay.innerHTML=html;overlay.style.display='flex';
+// Also update status
+if(gameState==='lost')statusEl.textContent='💀 游戏结束！得分: '+score;
+}
+
+function hideOver(){overlay.style.display='none'}
+
+function startGame(){
+score=0;lives=3;level=1;ghostFrightened=0;ghostEatCombo=0;collectedFruits=[];
+fruit=null;fruitSpawned1=0;fruitSpawned2=0;popups=[];
+scoreEl.textContent='0';highScore=loadHS();updLives();
+buildGrid();resetPos();gameState='playing';hideOver();tick=0;readyTimer=120;
+statusEl.textContent='🎮 游戏中';
+startBtn.textContent='▶ 游戏中';
+}
+function restart(){startGame()}
+
+function setDir(d){
+if(gameState==='start'||gameState==='lost'){startGame();return}
+if(gameState==='playing')pac.nextDir=d;
+}
+
+// Input
+document.addEventListener('keydown',e=>{
+const k=e.key.toLowerCase();
+if(k==='p'||k==='P'){e.preventDefault();return}
+if(k==='arrowleft'||k==='a'){e.preventDefault();setDir('left')}
+else if(k==='arrowright'||k==='d'){e.preventDefault();setDir('right')}
+else if(k==='arrowup'||k==='w'){e.preventDefault();setDir('up')}
+else if(k==='arrowdown'||k==='s'){e.preventDefault();setDir('down')}
+else if(gameState==='start'||gameState==='lost'){startGame()}
+});
+
+// Touch/swipe on canvas
+let tx=0,ty=0;
+C.addEventListener('touchstart',e=>{e.preventDefault();if(!e.touches.length)return;tx=e.touches[0].clientX;ty=e.touches[0].clientY;if(gameState==='start'||gameState==='lost')startGame()},{passive:false});
+C.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+C.addEventListener('touchend',e=>{if(!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)<10&&Math.abs(dy)<10)return;if(Math.abs(dx)>Math.abs(dy))setDir(dx>0?'right':'left');else setDir(dy>0?'down':'up')});
+
+// Canvas click to start
+C.addEventListener('click',()=>{if(gameState==='start'||gameState==='lost')startGame()});
+
+// D-pad
+for(const btn of dpadBtns){btn.addEventListener('click',()=>setDir(btn.dataset.dir))}
+
+startBtn.addEventListener('click',startGame);
+restartBtn.addEventListener('click',()=>{if(gameState==='playing'||gameState==='paused'){gameState='start'};restart()});
+
+// Init
+highScore=loadHS();buildGrid();updLives();gameState='start';
+showOver('🟡 吃豆人','← ↑ → ↓ / WASD 移动','点击或按方向键开始');
+loop();
+</script></body></html>
