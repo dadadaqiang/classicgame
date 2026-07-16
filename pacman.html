@@ -113,16 +113,26 @@ canvas{display:block;margin:0 auto;border-radius:12px;background:#000;box-shadow
 </div>
 
 <script type="application/ld+json">
-{
+[{
   "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"经典游戏厅","item":"https://game.455545.xyz/"},
+    {"@type":"ListItem","position":2,"name":"吃豆人","item":"https://game.455545.xyz/pacman.html"}
+  ]
+},
+{
   "@type": "WebApplication",
   "name": "吃豆人",
   "url": "https://game.455545.xyz/pacman.html",
-  "description": "在线玩经典吃豆人游戏！穿越迷宫、吃掉豆子、躲避幽灵。免费 HTML5 小游戏。",
-  "applicationCategory": "GameApplication",
+  "description": "在线玩经典吃豆人游戏！穿越迷宫、吃掉豆子、躲避幽灵。免费 HTML5 小游戏，支持键盘和触屏。",
+  "applicationCategory": "ArcadeGame",
   "operatingSystem": "Any",
-  "browserRequirements": "Requires JavaScript"
-}
+  "browserRequirements": "Requires JavaScript",
+  "genre": "Arcade游戏",
+  "offers": {"@type":"Offer","price":"0","priceCurrency":"CNY"},
+  "audience": {"@type":"Audience","audienceType":"所有人"}
+}]
 </script>
 
 <script>
